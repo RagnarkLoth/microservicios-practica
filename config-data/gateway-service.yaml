@@ -13,6 +13,8 @@ eureka:
 spring:
   cloud:
     gateway:
+      default-filters:
+      - AddResponseHeader=X-Gateway, true
       discovery:
         enabled: true
         locator:
@@ -31,3 +33,7 @@ spring:
         uri: lb://moto-service
         predicates:
         - Path=/api/motos/**
+      - id: eureka-service
+        uri: lb://eureka-service
+        predicates:
+        - Path=/eureka/**
