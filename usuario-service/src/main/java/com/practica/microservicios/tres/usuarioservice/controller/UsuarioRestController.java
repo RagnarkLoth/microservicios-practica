@@ -4,8 +4,10 @@ import com.practica.microservicios.tres.usuarioservice.entity.UsuarioEntity;
 import com.practica.microservicios.tres.usuarioservice.model.CarroModel;
 import com.practica.microservicios.tres.usuarioservice.model.MotoModel;
 import com.practica.microservicios.tres.usuarioservice.service.UsuarioService;
+import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -62,6 +64,7 @@ public class UsuarioRestController {
 
     }
 
+    @CircuitBreaker(name="carrosCB", fallbackMethod = "fallBackGetCarros")
     @GetMapping("/carros/{usuarioid}")
     public ResponseEntity<List<CarroModel>> traerCarros(@PathVariable("usuarioid") Integer usuarioId){
 
@@ -77,6 +80,7 @@ public class UsuarioRestController {
 
     }
 
+    @CircuitBreaker(name="motosCB", fallbackMethod = "fallBackGetMotos")
     @GetMapping("/motos/{usuarioid}")
     public ResponseEntity<List<MotoModel>> traerMotos(@PathVariable("usuarioid") Integer usuarioId){
 
@@ -92,6 +96,7 @@ public class UsuarioRestController {
 
     }
 
+    @CircuitBreaker(name="carrosCB", fallbackMethod = "fallBackSavecrro")
     @PostMapping("/carro/{usuarioId}")
     public ResponseEntity<CarroModel> guardarCarro(@PathVariable("usuarioId") Integer usuarioId, @RequestBody CarroModel carroModel){
 
@@ -101,7 +106,7 @@ public class UsuarioRestController {
 
     }
 
-
+    @CircuitBreaker(name="motosCB", fallbackMethod = "fallBackSaveMoto")
     @PostMapping("/moto/{usuarioId}")
     public ResponseEntity<MotoModel> guardarMotos(@PathVariable("usuarioId") Integer usuarioId, @RequestBody MotoModel motoModel){
 
@@ -111,10 +116,41 @@ public class UsuarioRestController {
 
     }
 
+    @CircuitBreaker(name="todosCB", fallbackMethod = "fallBackGetTodos") //HACE REFERENCIA A LA INSTANCIA QUE USAREMOS PARA LA TOLERANCIA DE FALLOS
     @GetMapping("/todos/{iduser}")
     public ResponseEntity<Map<String, Object>> listarTodosLosVehiculos(@PathVariable("iduser") Integer userId){
 
         return ResponseEntity.ok(usuarioService.traerVehiculosUsuario(userId));
+
+    }
+
+    private ResponseEntity<?> fallBackGetCarros(@PathVariable("usuarioId") int usuarioId, RuntimeException exception){
+
+        return new ResponseEntity("El usuario: " + usuarioId + " tiene los carros en el taller", HttpStatus.OK);
+
+    }
+
+    private ResponseEntity<?> fallBackGetMotos(@PathVariable("usuarioId") int usuarioId, RuntimeException exception){
+
+        return new ResponseEntity("El usuario: " + usuarioId + " tiene las motos en el taller", HttpStatus.OK);
+
+    }
+
+    private ResponseEntity<?> fallBackGetTodos(@PathVariable("usuarioId") int usuarioId, RuntimeException exception){
+
+        return new ResponseEntity("El usuario: " + usuarioId + " tiene las motos y los carros en el taller", HttpStatus.OK);
+
+    }
+
+    private ResponseEntity<List<CarroModel>> fallBackSaveCarro(@PathVariable("usuarioId") int usuarioId, RuntimeException exception){
+
+        return new ResponseEntity("El usuario: " + usuarioId + " no tiene dinero para lo carros", HttpStatus.OK);
+
+    }
+
+    private ResponseEntity<?> fallBackSaveMoto(@PathVariable("usuarioId") int usuarioId, RuntimeException exception){
+
+        return new ResponseEntity("El usuario: " + usuarioId + " no tiene dinero para las motos", HttpStatus.OK);
 
     }
 
