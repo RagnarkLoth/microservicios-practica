@@ -34,7 +34,7 @@ public class UsuarioService {
     //COMUNICACION DE MICROSERVICIOS REST TEMPLATE
     public List<CarroModel> traerCarros(int usuarioId){
 
-         return restTemplate.getForObject("http://carro-service/api/carros/usuario/" + usuarioId, List.class);
+         return restTemplate.getForObject("http://coche-service/api/carros/usuario/" + usuarioId, List.class);
 
     }
 

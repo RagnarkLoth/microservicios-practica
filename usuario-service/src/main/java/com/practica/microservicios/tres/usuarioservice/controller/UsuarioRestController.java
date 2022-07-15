@@ -64,8 +64,8 @@ public class UsuarioRestController {
 
     }
 
-    @CircuitBreaker(name="carrosCB", fallbackMethod = "fallBackGetCarros")
     @GetMapping("/carros/{usuarioid}")
+    @CircuitBreaker(name="carrosCB", fallbackMethod = "fallBackGetCarros")
     public ResponseEntity<List<CarroModel>> traerCarros(@PathVariable("usuarioid") Integer usuarioId){
 
         UsuarioEntity usuario = usuarioService.traerUsuarioId(usuarioId);
@@ -80,8 +80,8 @@ public class UsuarioRestController {
 
     }
 
-    @CircuitBreaker(name="motosCB", fallbackMethod = "fallBackGetMotos")
     @GetMapping("/motos/{usuarioid}")
+    @CircuitBreaker(name="motosCB", fallbackMethod = "fallBackGetMotos")
     public ResponseEntity<List<MotoModel>> traerMotos(@PathVariable("usuarioid") Integer usuarioId){
 
         UsuarioEntity usuario = usuarioService.traerUsuarioId(usuarioId);
@@ -96,8 +96,8 @@ public class UsuarioRestController {
 
     }
 
-    @CircuitBreaker(name="carrosCB", fallbackMethod = "fallBackSaveCarro")
     @PostMapping("/carro/{usuarioId}")
+    @CircuitBreaker(name="carrosCB", fallbackMethod = "fallBackSaveCarro")
     public ResponseEntity<CarroModel> guardarCarro(@PathVariable("usuarioId") Integer usuarioId, @RequestBody CarroModel carroModel){
 
         CarroModel carro = usuarioService.guardarCarros(usuarioId, carroModel);
@@ -106,8 +106,8 @@ public class UsuarioRestController {
 
     }
 
-    @CircuitBreaker(name="motosCB", fallbackMethod = "fallBackSaveMoto")
     @PostMapping("/moto/{usuarioId}")
+    @CircuitBreaker(name="motosCB", fallbackMethod = "fallBackSaveMoto")
     public ResponseEntity<MotoModel> guardarMotos(@PathVariable("usuarioId") Integer usuarioId, @RequestBody MotoModel motoModel){
 
         MotoModel moto = usuarioService.guardarMotos(usuarioId, motoModel);
@@ -116,39 +116,39 @@ public class UsuarioRestController {
 
     }
 
-    @CircuitBreaker(name="todosCB", fallbackMethod = "fallBackGetTodos") //HACE REFERENCIA A LA INSTANCIA QUE USAREMOS PARA LA TOLERANCIA DE FALLOS
     @GetMapping("/todos/{iduser}")
+    @CircuitBreaker(name="todosCB", fallbackMethod = "fallBackGetTodos")
     public ResponseEntity<Map<String, Object>> listarTodosLosVehiculos(@PathVariable("iduser") Integer userId){
 
         return ResponseEntity.ok(usuarioService.traerVehiculosUsuario(userId));
 
     }
 
-    public ResponseEntity<List<CarroModel>> fallBackGetCarros(@PathVariable("usuarioId") int usuarioId, RuntimeException e){
+    public ResponseEntity<List<CarroModel>> fallBackGetCarros(@PathVariable("usuarioId") Integer usuarioId, RuntimeException e){
 
         return new ResponseEntity("El usuario: " + usuarioId + " tiene los carros en el taller", HttpStatus.OK);
 
     }
 
-    public ResponseEntity<List<MotoModel>> fallBackGetMotos(@PathVariable("usuarioId") int usuarioId, RuntimeException e){
+    public ResponseEntity<List<MotoModel>> fallBackGetMotos(@PathVariable("usuarioId") Integer usuarioId, RuntimeException e){
 
         return new ResponseEntity("El usuario: " + usuarioId + " tiene las motos en el taller", HttpStatus.OK);
 
     }
 
-    public ResponseEntity<Map<String, Object>> fallBackGetTodos(@PathVariable("usuarioId") int usuarioId, RuntimeException e){
+    public ResponseEntity<Map<String, Object>> fallBackGetTodos(@PathVariable("usuarioId") Integer usuarioId, RuntimeException e){
 
         return new ResponseEntity("El usuario: " + usuarioId + " tiene las motos y los carros en el taller", HttpStatus.OK);
 
     }
 
-    public ResponseEntity<CarroModel> fallBackSaveCarro(@PathVariable("usuarioId") int usuarioId, @RequestBody CarroModel carroModel, RuntimeException e){
+    public ResponseEntity<CarroModel> fallBackSaveCarro(@PathVariable("usuarioId") Integer usuarioId, @RequestBody CarroModel carroModel, RuntimeException e){
 
         return new ResponseEntity("El usuario: " + usuarioId + " no tiene dinero para lo carros", HttpStatus.OK);
 
     }
 
-    public ResponseEntity<MotoModel> fallBackSaveMoto(@PathVariable("usuarioId") int usuarioId, @RequestBody MotoModel motoModel,RuntimeException e){
+    public ResponseEntity<MotoModel> fallBackSaveMoto(@PathVariable("usuarioId") Integer usuarioId, @RequestBody MotoModel motoModel,RuntimeException e){
 
         return new ResponseEntity("El usuario: " + usuarioId + " no tiene dinero para las motos", HttpStatus.OK);
 
